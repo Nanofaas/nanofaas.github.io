@@ -1,0 +1,26 @@
+title: NanoFaaS
+description: A minimal, modular Function-as-a-Service control plane.
+url: https://nanofaas.github.io
+baseurl: ""
+lang: en
+
+repo: https://github.com/Nanofaas/nanofaas
+docs: https://github.com/Nanofaas/nanofaas/tree/main/docs
+nanolab: https://github.com/Nanofaas/nanolab
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+
+plugins:
+  - jekyll-seo-tag
+
+exclude:
+  - brand
+  - docs
+  - scripts
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - CLAUDE.md

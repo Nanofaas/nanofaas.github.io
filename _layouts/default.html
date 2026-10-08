@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="{{ site.lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {% seo %}
+  <link rel="icon" type="image/png" href="{{ '/assets/img/mark.png' | relative_url }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Lexend:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="container nav" aria-label="Main">
+      <a class="brand" href="{{ '/' | relative_url }}">
+        <picture>
+          <source srcset="{{ '/assets/img/mark-dark.png' | relative_url }}" media="(prefers-color-scheme: dark)">
+          <img src="{{ '/assets/img/mark.png' | relative_url }}" alt="" width="32" height="32">
+        </picture>
+        nano<span>faas</span>
+      </a>
+      <ul class="nav-links">
+        <li class="optional"><a href="{{ '/' | relative_url }}#highlights">Features</a></li>
+        <li class="optional"><a href="{{ '/' | relative_url }}#quick-start">Quick start</a></li>
+        <li class="optional"><a href="{{ '/' | relative_url }}#architecture">Architecture</a></li>
+        <li><a href="{{ site.docs }}">Docs</a></li>
+        <li><a href="{{ site.repo }}">GitHub</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="{{ page.main_class | default: 'container prose' }}">
+    {{ content }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>NanoFaaS · MIT License</p>
+      <ul>
+        <li><a href="{{ site.repo }}">GitHub</a></li>
+        <li><a href="{{ site.docs }}">Docs</a></li>
+        <li><a href="{{ site.nanolab }}">NanoLab</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.highlight > pre').forEach(function (pre) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'copy';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', 'Copy code to clipboard');
+      btn.addEventListener('click', function () {
+        var text = (pre.querySelector('code') || pre).innerText.replace(/\n$/, '');
+        navigator.clipboard.writeText(text).then(function () {
+          btn.textContent = 'Copied';
+        }, function () {
+          btn.textContent = 'Copy failed';
+        }).then(function () {
+          setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+        });
+      });
+      pre.parentElement.appendChild(btn);
+    });
+  </script>
+</body>
+</html>
