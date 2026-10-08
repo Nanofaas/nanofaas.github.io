@@ -32,6 +32,10 @@ for m in forecasting p2p-discovery; do grep -q "<code>$m</code>" "$page" || fail
 grep -q 'containerd/crun' "$page" || fail "containerd/crun backend not mentioned"
 grep -q '/blob/main/LICENSE"' "$page" || fail "no link to the LICENSE file"
 
+grep -q '<meta property="og:image" content="https://nanofaas.github.io/assets/img/og.png"' "$page" || fail "og:image missing"
+grep -q 'twitter:card" content="summary_large_image"' "$page" || fail "large link preview card missing"
+python3 -c "from PIL import Image; assert Image.open('_site/assets/img/og.png').size == (1200, 630)" || fail "og.png must be 1200x630"
+
 # WCAG AA (4.5:1) for light-theme link text and white-on-primary button text
 python3 - _site/assets/css/style.css <<'PY' || fail "light-theme contrast below 4.5:1"
 import re, sys

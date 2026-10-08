@@ -52,6 +52,14 @@ def main():
     mark.save(OUT / "mark.png", optimize=True)
     for_dark_bg(mark).save(OUT / "mark-dark.png", optimize=True)
 
+    # link preview (Open Graph / Twitter large card): logo centered on the light section tint
+    og = Image.new("RGBA", (1200, 630), (0xF4, 0xF7, 0xFC, 255))
+    big = trim(src)
+    big = big.resize((round(400 * big.width / big.height), 400), Image.LANCZOS)
+    og.alpha_composite(big, ((og.width - big.width) // 2, (og.height - big.height) // 2))
+    og.convert("RGB").save(OUT / "og.png", optimize=True)
+
+    assert Image.open(OUT / "og.png").size == (1200, 630)
     for name in ("logo.png", "logo-dark.png", "mark.png", "mark-dark.png"):
         im = Image.open(OUT / name)
         assert im.mode == "RGBA", name
