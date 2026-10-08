@@ -26,6 +26,9 @@ grep -q 'class="highlight"' "$page" || fail "no Rouge-highlighted code blocks"
 if grep -q 'CLI and Java example functions compile to GraalVM native executables and ship' "$page"; then
   fail "CLI does not ship as an image (README: services ship on Distroless)"
 fi
+n=$(grep -c 'class="module"' "$page" || true)
+test "$n" -eq 12 || fail "expected 12 module cards, found $n"
+for m in forecasting p2p-discovery; do grep -q "<code>$m</code>" "$page" || fail "module $m missing"; done
 grep -q 'containerd/crun' "$page" || fail "containerd/crun backend not mentioned"
 grep -q '/blob/main/LICENSE"' "$page" || fail "no link to the LICENSE file"
 

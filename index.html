@@ -32,7 +32,7 @@ main_class: home
     <ul class="cards">
       <li class="card">
         <h3>Build-time modularity</h3>
-        <p>Ten optional modules with declared defaults, requirements and conflicts, validated before a single task runs.</p>
+        <p>Twelve optional modules with declared defaults, requirements and conflicts, validated before a single task runs.</p>
       </li>
       <li class="card">
         <h3>One API, three execution modes</h3>
@@ -192,23 +192,75 @@ curl -X POST http://localhost:8080/v1/functions/word-stats:invoke \
 <section class="section" id="modules">
   <div class="container">
     <h2>Modules</h2>
-    <p class="section-lead">Pick a set at build time. Each module declares its defaults, requirements and conflicts, and an invalid selection fails before any task runs. The three deployment providers are mutually exclusive.</p>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Module</th><th>Purpose</th><th class="center">Default</th></tr></thead>
-        <tbody>
-          <tr><td><code>async-queue</code></td><td>Per-function queues and scheduler for asynchronous calls</td><td class="center">✓</td></tr>
-          <tr><td><code>sync-queue</code></td><td>Admission control and backpressure for synchronous calls</td><td class="center">✓</td></tr>
-          <tr><td><code>autoscaler</code></td><td>Replica scaling driven by workload metrics</td><td class="center">✓</td></tr>
-          <tr><td><code>concurrency-control</code></td><td>Per-function concurrency governor</td><td class="center">✓</td></tr>
-          <tr><td><code>runtime-config</code></td><td>Hot reconfiguration through an admin API</td><td class="center">✓</td></tr>
-          <tr><td><code>offload</code></td><td>Transparent proxying of synchronous calls to a remote NanoFaaS</td><td class="center">✓</td></tr>
-          <tr><td><code>build-metadata</code></td><td>Build diagnostics endpoint</td><td class="center">✓</td></tr>
-          <tr><td><code>k8s-deployment-provider</code></td><td>Kubernetes backend</td><td class="center">✓</td></tr>
-          <tr><td><code>container-deployment-provider</code></td><td>Docker-compatible local backend</td><td class="center"></td></tr>
-          <tr><td><code>containerd-deployment-provider</code></td><td>Rootless containerd/crun backend</td><td class="center"></td></tr>
-        </tbody>
-      </table>
+    <p class="section-lead">Twelve modules around a small core, picked at build time. Each one declares its defaults, requirements and conflicts, and an invalid selection fails before any task runs.</p>
+    <div class="module-groups">
+      <h3>Queueing and admission</h3>
+      <p class="group-note">Select both and they plug into one scheduler engine: pick the strategy at startup and switch it at runtime.</p>
+      <ul class="modules-grid">
+        <li class="module">
+          <div class="module-head"><code>async-queue</code><span class="tag tag-default">Default</span></div>
+          <p>Per-function queues and a scheduler for asynchronous calls. Without it, <code>:enqueue</code> answers <code>501 Not Implemented</code>.</p>
+        </li>
+        <li class="module">
+          <div class="module-head"><code>sync-queue</code><span class="tag tag-default">Default</span></div>
+          <p>Shared queue with admission control and backpressure for synchronous calls, rejecting work on saturation or excessive estimated wait.</p>
+        </li>
+      </ul>
+      <h3>Scaling and concurrency</h3>
+      <ul class="modules-grid">
+        <li class="module">
+          <div class="module-head"><code>autoscaler</code><span class="tag tag-default">Default</span></div>
+          <p>Scales managed replicas from queue depth and in-flight work, within per-function bounds and cooldowns. Replicas still starting are never walked back.</p>
+          <p class="module-needs">Needs <code>async-queue</code> or <code>sync-queue</code></p>
+        </li>
+        <li class="module">
+          <div class="module-head"><code>concurrency-control</code><span class="tag tag-default">Default</span></div>
+          <p>Per-function concurrency governor with five policies: <code>FIXED</code>, <code>STATIC_PER_POD</code>, <code>ADAPTIVE_PER_POD</code>, <code>BUDGETED</code> (weighted max-min fair share of a platform budget) and <code>SOJOURN</code>.</p>
+          <p class="module-needs">Needs <code>async-queue</code> or <code>sync-queue</code></p>
+        </li>
+      </ul>
+      <h3>Deployment backends</h3>
+      <p class="group-note">Pick one: the three providers are mutually exclusive. Without a provider, functions run in <code>EXTERNAL</code> or <code>LOCAL</code> mode.</p>
+      <ul class="modules-grid">
+        <li class="module">
+          <div class="module-head"><code>k8s-deployment-provider</code><span class="tag tag-default">Default</span></div>
+          <p>Runs managed functions as Kubernetes deployments.</p>
+        </li>
+        <li class="module">
+          <div class="module-head"><code>container-deployment-provider</code><span class="tag">Optional</span></div>
+          <p>Runs functions as containers on a local Docker-compatible runtime.</p>
+        </li>
+        <li class="module">
+          <div class="module-head"><code>containerd-deployment-provider</code><span class="tag">Optional</span></div>
+          <p>Runs functions on rootless containerd with crun and CNI networking: no Docker daemon, no root.</p>
+        </li>
+      </ul>
+      <h3>Edge and multi-node</h3>
+      <ul class="modules-grid">
+        <li class="module">
+          <div class="module-head"><code>offload</code><span class="tag tag-default">Default</span></div>
+          <p>Transparently proxies synchronous calls to a remote NanoFaaS, for example edge to cloud, either always or when the local <code>sync-queue</code> is saturated. The execution stays tracked locally.</p>
+        </li>
+        <li class="module">
+          <div class="module-head"><code>p2p-discovery</code><span class="tag">Optional</span></div>
+          <p>Nodes find each other over SWIM gossip, measure latency, choose active neighbours and exchange messages, optionally sharing functions, images and resource usage. Sized for tens to a few hundred nodes.</p>
+        </li>
+        <li class="module">
+          <div class="module-head"><code>forecasting</code><span class="tag">Optional</span></div>
+          <p>Forecasts each function's external arrival rate, either with an EWMA over fixed time windows or from an uploaded trace.</p>
+        </li>
+      </ul>
+      <h3>Operations</h3>
+      <ul class="modules-grid">
+        <li class="module">
+          <div class="module-head"><code>runtime-config</code><span class="tag tag-default">Default</span></div>
+          <p>Hot reconfiguration through a namespaced admin API. Other modules contribute the parameters they let you change.</p>
+        </li>
+        <li class="module">
+          <div class="module-head"><code>build-metadata</code><span class="tag tag-default">Default</span></div>
+          <p>Diagnostics endpoint reporting how the running artifact was built, so you can prove which build is serving.</p>
+        </li>
+      </ul>
     </div>
     <div class="two-col">
       <div>

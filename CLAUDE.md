@@ -23,5 +23,6 @@ Headless Chrome screenshots with `--window-size` are misleading: the viewport is
 ## Content rules
 
 - Copy is sourced from the `Nanofaas/nanofaas` README; links point to `Nanofaas/nanofaas` (`main`) and `Nanofaas/nanolab`.
+- Module facts (list, defaults, requirements, conflicts) come from upstream `platform/modules/*/module.properties` and module READMEs, which are newer than the top-level README (12 modules, not 10). `check.sh` asserts 12 module cards; update it when upstream adds or removes one.
 - Do not describe NanoFaaS as a research platform and do not claim production readiness or high availability.
 - `docs/superpowers/` holds the design spec and plan; it is excluded from the build.
