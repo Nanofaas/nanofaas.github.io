@@ -26,6 +26,8 @@ grep -q 'class="highlight"' "$page" || fail "no Rouge-highlighted code blocks"
 if grep -q 'CLI and Java example functions compile to GraalVM native executables and ship' "$page"; then
   fail "CLI does not ship as an image (README: services ship on Distroless)"
 fi
+grep -q 'containerd/crun' "$page" || fail "containerd/crun backend not mentioned"
+grep -q '/blob/main/LICENSE"' "$page" || fail "no link to the LICENSE file"
 
 # WCAG AA (4.5:1) for light-theme link text and white-on-primary button text
 python3 - _site/assets/css/style.css <<'PY' || fail "light-theme contrast below 4.5:1"

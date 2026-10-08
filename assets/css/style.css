@@ -135,6 +135,7 @@ pre {
 .btn-ghost:hover { border-color: var(--accent); }
 .badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 32px 0 0; padding: 0; list-style: none; }
 .badges li { padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 0.85rem; }
+.badges a { color: inherit; }
 
 /* highlight cards */
 .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); margin: 0; padding: 0; list-style: none; }

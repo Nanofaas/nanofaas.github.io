@@ -17,8 +17,10 @@ main_class: home
     <ul class="badges">
       <li>Java 25</li>
       <li>GraalVM native</li>
-      <li>Kubernetes · Docker · containerd</li>
-      <li>MIT licensed</li>
+      <li>Kubernetes</li>
+      <li>Docker</li>
+      <li>containerd/crun</li>
+      <li><a href="{{ site.repo }}/blob/main/LICENSE">MIT License</a></li>
     </ul>
   </div>
 </section>
@@ -38,7 +40,7 @@ main_class: home
       </li>
       <li class="card">
         <h3>Interchangeable backends</h3>
-        <p>Kubernetes, a local Docker-compatible runtime, or rootless containerd.</p>
+        <p>Kubernetes, a local Docker-compatible runtime, or rootless containerd/crun.</p>
       </li>
       <li class="card">
         <h3>Concurrency control with SLOs</h3>
@@ -155,7 +157,7 @@ curl -X POST http://localhost:8080/v1/functions/word-stats:invoke \
 
         <rect class="d-box" x="245" y="205" width="280" height="65" rx="10"/>
         <text class="d-title" x="385" y="232">Deployment provider</text>
-        <text class="d-sub" x="385" y="254">Kubernetes · container · containerd</text>
+        <text class="d-sub" x="385" y="254">Kubernetes · Docker · containerd/crun</text>
 
         <line class="d-line" x1="385" y1="110" x2="385" y2="125"/>
         <line class="d-line" x1="385" y1="190" x2="385" y2="205"/>
@@ -204,7 +206,7 @@ curl -X POST http://localhost:8080/v1/functions/word-stats:invoke \
           <tr><td><code>build-metadata</code></td><td>Build diagnostics endpoint</td><td class="center">✓</td></tr>
           <tr><td><code>k8s-deployment-provider</code></td><td>Kubernetes backend</td><td class="center">✓</td></tr>
           <tr><td><code>container-deployment-provider</code></td><td>Docker-compatible local backend</td><td class="center"></td></tr>
-          <tr><td><code>containerd-deployment-provider</code></td><td>Rootless containerd backend</td><td class="center"></td></tr>
+          <tr><td><code>containerd-deployment-provider</code></td><td>Rootless containerd/crun backend</td><td class="center"></td></tr>
         </tbody>
       </table>
     </div>
