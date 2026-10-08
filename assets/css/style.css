@@ -2,7 +2,8 @@
 :root {
   --navy: #0B2559;
   --blue: #1A7CFF;
-  --blue-hover: #0F66E0;
+  --blue-strong: #0F66E0; /* AA-contrast blue for text and filled buttons */
+  --blue-strong-hover: #0B52B8;
 
   --bg: #FFFFFF;
   --bg-alt: #F4F7FC;
@@ -10,7 +11,7 @@
   --text: #0E1A33;
   --muted: #51607A;
   --line: #DDE4F0;
-  --accent: #1A7CFF;
+  --accent: #0F66E0;
   --accent-strong: #0B2559;
   --code-bg: #0B1730;
   --code-text: #E6EDF8;
@@ -106,7 +107,7 @@ pre {
 .highlight .o, .highlight .p { color: #B7C3D9; }
 
 /* ---------- Markdown pages (tutorials) ---------- */
-.prose { max-width: 760px; padding-top: 48px; padding-bottom: 64px; }
+.prose { max-width: 760px; padding-top: 48px; padding-bottom: 64px; overflow-wrap: anywhere; }
 .prose h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); }
 .prose h2 { margin-top: 2.5rem; }
 .prose img { border-radius: var(--radius); }
@@ -128,8 +129,8 @@ pre {
 .lead { max-width: 680px; margin: 0 auto 32px; color: var(--muted); font-size: 1.15rem; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
 .btn { display: inline-block; padding: 12px 22px; border: 1px solid transparent; border-radius: 999px; font-weight: 600; text-decoration: none; }
-.btn-primary { background: var(--blue); color: #fff; }
-.btn-primary:hover { background: var(--blue-hover); }
+.btn-primary { background: var(--blue-strong); color: #fff; }
+.btn-primary:hover { background: var(--blue-strong-hover); }
 .btn-ghost { border-color: var(--line); color: var(--text); }
 .btn-ghost:hover { border-color: var(--accent); }
 .badges { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 32px 0 0; padding: 0; list-style: none; }

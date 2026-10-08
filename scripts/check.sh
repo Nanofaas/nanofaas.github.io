@@ -23,5 +23,28 @@ for id in highlights quick-start architecture modules sdks; do
   grep -q "id=\"$id\"" "$page" || fail "section #$id missing"
 done
 grep -q 'class="highlight"' "$page" || fail "no Rouge-highlighted code blocks"
+if grep -q 'CLI and Java example functions compile to GraalVM native executables and ship' "$page"; then
+  fail "CLI does not ship as an image (README: services ship on Distroless)"
+fi
+
+# WCAG AA (4.5:1) for light-theme link text and white-on-primary button text
+python3 - _site/assets/css/style.css <<'PY' || fail "light-theme contrast below 4.5:1"
+import re, sys
+css = open(sys.argv[1]).read()
+root = dict(re.findall(r"--([\w-]+):\s*(#[0-9A-Fa-f]{6})", css.split("@media")[0]))
+btn = re.search(r"\.btn-primary\s*\{[^}]*background:\s*var\(--([\w-]+)\)", css).group(1)
+def lum(h):
+    c = [int(h[i:i + 2], 16) / 255 for i in (1, 3, 5)]
+    c = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in c]
+    return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+def ratio(a, b):
+    hi, lo = sorted((lum(a), lum(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+pairs = {"accent/bg": (root["accent"], root["bg"]), "accent/bg-alt": (root["accent"], root["bg-alt"]),
+         "btn-primary": ("#FFFFFF", root[btn])}
+bad = {k: round(ratio(*v), 2) for k, v in pairs.items() if ratio(*v) < 4.5}
+print("contrast fail:", bad) if bad else None
+sys.exit(1 if bad else 0)
+PY
 
 echo "check ok"
