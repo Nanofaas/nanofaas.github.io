@@ -23,8 +23,8 @@ _config.yml              title, description, url, markdown: kramdown, highlighte
 _layouts/default.html    <head>, nav, footer, shared by every page
 index.html               landing page (layout: default)
 assets/css/style.css     single stylesheet, tokens on :root, dark mode, prose + rouge styles
-assets/img/logo.png      resized logo, transparent background
-assets/img/favicon.png   cloud mark only
+assets/img/logo*.png     resized logo + dark-mode variant, transparent background
+assets/img/mark*.png     64px cloud mark (favicon, nav) + dark-mode variant
 Gemfile                  github-pages gem, local preview only
 ```
 
