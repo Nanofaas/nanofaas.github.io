@@ -6,9 +6,9 @@ Jekyll site for NanoFaaS, published by GitHub Pages from `main` of `Nanofaas/nan
 
 ## Commands
 
-- `scripts/check.sh` — builds in Docker (`ruby:3.3`; system Ruby 2.6 is too old) and asserts on `_site/` (assets present, `docs/ scripts/ brand/` not published, section ids, no "research" wording). Run after every change.
+- `scripts/check.sh` — builds in Docker (`ruby:3.3`; system Ruby 2.6 is too old) and asserts on `_site/`: assets present, `docs/ scripts/ brand/` not published, section ids and module count, no "research" wording, Open Graph image, skip link, Clipboard-API guard, WCAG AA contrast of the light accent, `color-mix()` fallbacks. It also builds a throwaway `tutorials/zz-check-fixture.md` (deleted on exit) to prove a Markdown page gets the prose layout. Run after every change.
 - `python3 -m http.server 4000 -d _site` — view the built site.
-- `python3 scripts/make-assets.py` — regenerate `assets/img/*` (logo, dark variant, 64px mark) from `brand/nanofaas-logo-transparent.png`.
+- `python3 scripts/make-assets.py` — regenerate `assets/img/*` (logo, dark variant, 64px mark, 1200×630 `og.png` link preview) from `brand/nanofaas-logo-transparent.png`.
 
 Headless Chrome screenshots with `--window-size` are misleading: the viewport is clamped to ≥500px and follows the OS theme. Use Chrome DevTools Protocol (`Emulation.setDeviceMetricsOverride`, `Emulation.setEmulatedMedia`) to check phone widths and light/dark.
 

@@ -48,6 +48,11 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
 h1, h2, h3 { font-family: var(--font-head); line-height: 1.2; letter-spacing: -0.01em; }
 code, pre { font-family: var(--font-mono); font-size: 0.9em; }
 [id] { scroll-margin-top: 80px; }
+.skip-link {
+  position: absolute; left: 16px; top: -48px; z-index: 20; padding: 8px 16px;
+  background: var(--accent); color: #fff; border-radius: 0 0 8px 8px; font-weight: 600; text-decoration: none;
+}
+.skip-link:focus { top: 0; }
 
 .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 16px; }
 @media (min-width: 720px) { .container { padding: 0 32px; } }
@@ -55,6 +60,7 @@ code, pre { font-family: var(--font-mono); font-size: 0.9em; }
 /* ---------- header / footer ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 10;
+  background: var(--bg);
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
@@ -186,7 +192,7 @@ pre {
 .diagram { margin: 0 0 2.5rem; padding: 24px; overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
 .diagram svg { display: block; width: 100%; min-width: 640px; max-width: 820px; margin: 0 auto; }
 .d-box { fill: var(--bg-alt); stroke: var(--line); stroke-width: 1.5; }
-.d-core { fill: color-mix(in srgb, var(--blue) 14%, var(--surface)); stroke: var(--blue); stroke-width: 1.5; }
+.d-core { fill: var(--bg-alt); fill: color-mix(in srgb, var(--blue) 14%, var(--surface)); stroke: var(--blue); stroke-width: 1.5; }
 .d-frame { fill: none; stroke: var(--accent-strong); stroke-width: 1.5; stroke-dasharray: 6 5; }
 .d-pill { fill: var(--accent-strong); }
 .d-pill-text { font: 600 13px var(--font-body); fill: var(--bg); text-anchor: middle; }
