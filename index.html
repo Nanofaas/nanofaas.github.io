@@ -56,7 +56,7 @@ main_class: home
       </li>
       <li class="card">
         <h3>Reproducible distributions</h3>
-        <p>One versioned YAML recipe builds a control plane and its functions, images included.</p>
+        <p>One versioned YAML <a href="#recipes">recipe</a> builds your own control plane and its functions, images included.</p>
       </li>
     </ul>
   </div>
@@ -220,17 +220,63 @@ curl -X POST http://localhost:8080/v1/functions/word-stats:invoke \
 {% endhighlight %}
       </div>
       <div>
-        <h3>Or build from a recipe</h3>
-        <p>A recipe fixes modules, configuration, JVM or native build mode, and the functions to package with their images. See <a href="{{ site.repo }}/blob/main/docs/recipes.md">distribution recipes</a>.</p>
-{% highlight bash %}
-./gradlew assembleRecipe -Precipe=recipes/local-demo.yaml
-{% endhighlight %}
+        <h3>Ship it as your own distribution</h3>
+        <p>To fix the module selection together with build mode, configuration and functions, write a <a href="#recipes">recipe</a>.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section section-alt" id="sdks">
+<section class="section section-alt" id="recipes">
+  <div class="container">
+    <h2>Build your own NanoFaaS</h2>
+    <p class="section-lead">A recipe is a versioned YAML file that describes a custom NanoFaaS distribution: which control plane to build, how, and which functions to package with it. One command turns it into artifacts and container images.</p>
+    <div class="two-col">
+      <div>
+        <ul class="ticks">
+          <li><strong>Exact module set</strong> for the control plane, validated before anything is built.</li>
+          <li><strong>JVM or GraalVM native</strong> build, with per-component native-image options.</li>
+          <li><strong>Spring configuration</strong> baked into the control plane.</li>
+          <li><strong>Functions and services</strong> from any SDK, packaged as images next to it.</li>
+          <li><strong>Your registry and tag</strong>, with optional multi-architecture images.</li>
+        </ul>
+        <p>Validation and preview need no Docker daemon, GraalVM or registry credentials, and the preview shows exactly what the build will use.</p>
+      </div>
+      <div>
+{% highlight yaml %}
+schemaVersion: 2
+name: edge-demo
+
+registry:
+  repository: ghcr.io/my-org
+  tag: "1.0.0"
+  platforms: [linux/amd64, linux/arm64]
+
+controlPlane:
+  modules: [async-queue, container-deployment-provider, build-metadata]
+  build:
+    mode: native
+
+functions:
+  - name: word-stats
+    sdk: java-lite
+    build: {mode: native}
+    container: {image: word-stats-java-lite}
+{% endhighlight %}
+      </div>
+    </div>
+    <h3>Four commands</h3>
+{% highlight bash %}
+./gradlew listRecipeFunctions                              # functions available to package
+./gradlew validateRecipe -Precipe=recipes/edge-demo.yaml   # validate and preview, builds nothing
+./gradlew assembleRecipe -Precipe=recipes/edge-demo.yaml   # build artifacts and images
+./gradlew publishRecipe  -Precipe=recipes/edge-demo.yaml   # build, then push to your registry
+{% endhighlight %}
+    <p>Start from <a href="{{ site.repo }}/blob/main/recipes/local-demo.yaml"><code>recipes/local-demo.yaml</code></a> or read the <a href="{{ site.repo }}/blob/main/docs/recipes.md">recipe guide</a>.</p>
+  </div>
+</section>
+
+<section class="section" id="sdks">
   <div class="container">
     <h2>Write functions in any language</h2>
     <p class="section-lead">A function is an HTTP service behind a small contract. SDKs make it a few lines; examples ship for every SDK language plus Bash.</p>

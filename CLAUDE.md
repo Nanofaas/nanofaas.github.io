@@ -17,7 +17,7 @@ Headless Chrome screenshots with `--window-size` are misleading: the viewport is
 - `_layouts/default.html` is the only layout: head (`{% seo %}`, Google Fonts), nav, footer, and the inline copy-button script (targets `.highlight > pre`, copies from `code`).
 - `main` gets class `page.main_class`, defaulting to `container prose`; `index.html` sets `main_class: home` and builds its own `.section`s. Any new Markdown page with `layout: default` is styled as prose automatically.
 - `assets/css/style.css` holds everything: tokens on `:root` with a `prefers-color-scheme: dark` override, then base, header/footer, code/Rouge colors, prose, landing sections, SVG diagram classes (`d-*`).
-- Nav links use `/#id`, so they work from sub-pages. The landing ids `highlights quick-start architecture modules sdks` are asserted by `check.sh`.
+- Nav links use `/#id`, so they work from sub-pages. The landing ids `highlights quick-start architecture modules recipes sdks` are asserted by `check.sh`.
 - Code blocks on `index.html` use `{% highlight %}` so they get the same Rouge markup as Markdown fences.
 
 ## Content rules

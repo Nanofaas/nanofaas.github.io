@@ -19,7 +19,7 @@ done
 grep -q 'rel="icon"' "$page" || fail "favicon link missing"
 grep -q "querySelector('code')" "$page" || fail "copy button must copy from <code>, not the whole <pre>"
 if grep -qi research "$page"; then fail "'research' wording on page"; fi
-for id in highlights quick-start architecture modules sdks; do
+for id in highlights quick-start architecture modules recipes sdks; do
   grep -q "id=\"$id\"" "$page" || fail "section #$id missing"
 done
 grep -q 'class="highlight"' "$page" || fail "no Rouge-highlighted code blocks"
