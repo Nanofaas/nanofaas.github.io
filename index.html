@@ -2,4 +2,246 @@
 layout: default
 main_class: home
 ---
-<section class="hero"><div class="container"><h1>NanoFaaS</h1></div></section>
+<section class="hero">
+  <div class="container">
+    <picture>
+      <source srcset="{{ '/assets/img/logo-dark.png' | relative_url }}" media="(prefers-color-scheme: dark)">
+      <img class="hero-logo" src="{{ '/assets/img/logo.png' | relative_url }}" alt="NanoFaaS" width="480" height="320">
+    </picture>
+    <h1>A minimal, modular Function-as-a-Service control plane.</h1>
+    <p class="lead">NanoFaaS registers, deploys and invokes containerized functions on Kubernetes or on a single host. The control plane is one reactive Java service, and everything beyond invocation is a module you choose at build time.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="#quick-start">Get started</a>
+      <a class="btn btn-ghost" href="{{ site.repo }}">View on GitHub</a>
+    </div>
+    <ul class="badges">
+      <li>Java 25</li>
+      <li>GraalVM native</li>
+      <li>Kubernetes · Docker · containerd</li>
+      <li>MIT licensed</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section section-alt" id="highlights">
+  <div class="container">
+    <h2>Only what you need, nothing more</h2>
+    <p class="section-lead">A build contains only the modules it needs. Queueing, autoscaling, concurrency control, hot reconfiguration, offloading and each deployment backend are opt-in.</p>
+    <ul class="cards">
+      <li class="card">
+        <h3>Build-time modularity</h3>
+        <p>Ten optional modules with declared defaults, requirements and conflicts, validated before a single task runs.</p>
+      </li>
+      <li class="card">
+        <h3>One API, three execution modes</h3>
+        <p>Managed deployments, passthrough to external endpoints and in-process execution share the same invocation endpoints.</p>
+      </li>
+      <li class="card">
+        <h3>Interchangeable backends</h3>
+        <p>Kubernetes, a local Docker-compatible runtime, or rootless containerd.</p>
+      </li>
+      <li class="card">
+        <h3>Concurrency control with SLOs</h3>
+        <p>Per-function limits that are static, adapt to latency, or share a platform-wide budget with weighted max-min fairness.</p>
+      </li>
+      <li class="card">
+        <h3>Native builds</h3>
+        <p>The control plane, CLI and Java example functions compile to GraalVM native executables and ship on Distroless images.</p>
+      </li>
+      <li class="card">
+        <h3>Any language</h3>
+        <p>Functions are HTTP services behind a small contract, with SDKs for Java, Python, Go, JavaScript and Rust.</p>
+      </li>
+      <li class="card">
+        <h3>Reproducible distributions</h3>
+        <p>One versioned YAML recipe builds a control plane and its functions, images included.</p>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="quick-start">
+  <div class="container">
+    <h2>Quick start</h2>
+    <p class="section-lead">You need Java 25; if it is missing, Gradle downloads a JDK. Clone the <a href="{{ site.repo }}">repository</a> and open three terminals.</p>
+    <ol class="steps">
+      <li>
+        <h3>Start the control plane</h3>
+{% highlight bash %}
+./gradlew :control-plane:bootRun
+{% endhighlight %}
+      </li>
+      <li>
+        <h3>Start an example function on port 9090</h3>
+{% highlight bash %}
+./gradlew :functions:java:word-stats:bootRun --args='--server.port=9090'
+{% endhighlight %}
+      </li>
+      <li>
+        <h3>Build the CLI, register the function and invoke it</h3>
+{% highlight bash %}
+./gradlew :nanofaas-cli:installDist
+alias nanofaas="$PWD/clients/cli/build/install/nanofaas-cli/bin/nanofaas-cli"
+
+cat > word-stats.yaml <<'EOF'
+name: word-stats
+image: nanofaas/java-word-stats
+executionMode: EXTERNAL
+endpointUrl: http://localhost:9090/invoke
+EOF
+
+nanofaas fn apply -f word-stats.yaml
+nanofaas invoke word-stats -d '{"text": "to be or not to be", "topN": 2}'
+{% endhighlight %}
+        <p>The response:</p>
+{% highlight json %}
+{"executionId":"cf9360a6-…","status":"success","output":{"averageWordLength":2.17,"wordCount":6,"topWords":[{"count":2,"word":"be"},{"count":2,"word":"to"}],"uniqueWords":4},…}
+{% endhighlight %}
+      </li>
+    </ol>
+
+    <div class="two-col">
+      <div>
+        <h3>Asynchronous invocation</h3>
+        <p>Enqueue a call and get an execution ID straight away.</p>
+{% highlight bash %}
+nanofaas enqueue word-stats -d '{"text": "hello world"}'
+nanofaas exec get <executionId>
+{% endhighlight %}
+      </div>
+      <div>
+        <h3>Plain HTTP</h3>
+        <p>The CLI wraps the HTTP API, which you can also call directly.</p>
+{% highlight bash %}
+curl -X POST http://localhost:8080/v1/functions/word-stats:invoke \
+  -H 'Content-Type: application/json' -d '{"input": {"text": "hello"}}'
+{% endhighlight %}
+      </div>
+    </div>
+    <p>Next: run functions on <a href="{{ site.repo }}/blob/main/docs/quickstart.md">Kubernetes</a>, or <a href="{{ site.repo }}/blob/main/docs/tutorial-function.md">write your own function</a>.</p>
+  </div>
+</section>
+
+<section class="section section-alt" id="architecture">
+  <div class="container">
+    <h2>Architecture</h2>
+    <p class="section-lead">One control plane with a small core. Optional modules plug in around it, and a deployment provider runs the functions it manages.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 760 300" role="img" aria-labelledby="arch-title arch-desc">
+        <title id="arch-title">NanoFaaS architecture</title>
+        <desc id="arch-desc">Clients call the control plane core over HTTP on port 8080. The core works with optional modules and a deployment provider. The provider runs managed instances; the core forwards external calls to an external endpoint.</desc>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path class="d-arrowhead" d="M0 0L10 5L0 10z"/>
+          </marker>
+        </defs>
+
+        <rect class="d-pill" x="10" y="132" width="140" height="50" rx="25"/>
+        <text class="d-pill-text" x="80" y="162">Client · SDK · CLI</text>
+        <line class="d-line" x1="150" y1="157" x2="243" y2="157" marker-end="url(#arrow)"/>
+        <text class="d-label" x="196" y="147">HTTP :8080</text>
+
+        <rect class="d-frame" x="225" y="10" width="320" height="280" rx="14"/>
+        <text class="d-title" x="385" y="34">Control plane</text>
+
+        <rect class="d-box" x="245" y="45" width="280" height="65" rx="10"/>
+        <text class="d-title" x="385" y="72">Optional modules</text>
+        <text class="d-sub" x="385" y="94">queues · autoscaler · concurrency · offload</text>
+
+        <rect class="d-core" x="245" y="125" width="280" height="65" rx="10"/>
+        <text class="d-title" x="385" y="152">Core</text>
+        <text class="d-sub" x="385" y="174">registry · dispatch · execution store</text>
+
+        <rect class="d-box" x="245" y="205" width="280" height="65" rx="10"/>
+        <text class="d-title" x="385" y="232">Deployment provider</text>
+        <text class="d-sub" x="385" y="254">Kubernetes · container · containerd</text>
+
+        <line class="d-line" x1="385" y1="110" x2="385" y2="125"/>
+        <line class="d-line" x1="385" y1="190" x2="385" y2="205"/>
+
+        <rect class="d-box" x="590" y="125" width="160" height="65" rx="10"/>
+        <text class="d-title" x="670" y="152">External endpoint</text>
+        <text class="d-sub" x="670" y="174">EXTERNAL mode</text>
+        <line class="d-line" x1="525" y1="157" x2="588" y2="157" marker-end="url(#arrow)"/>
+
+        <rect class="d-box" x="590" y="205" width="160" height="65" rx="10"/>
+        <text class="d-title" x="670" y="232">Managed instances</text>
+        <text class="d-sub" x="670" y="254">DEPLOYMENT mode</text>
+        <line class="d-line" x1="525" y1="237" x2="588" y2="237" marker-end="url(#arrow)"/>
+      </svg>
+    </figure>
+
+    <p class="section-lead">A synchronous call (<code>POST /v1/functions/{name}:invoke</code>) is validated, rate-limited and checked for idempotency, then recorded in the execution store. It goes through <code>sync-queue</code> if that module is present, otherwise through <code>async-queue</code>, otherwise straight to the function. Metrics and health are served on port 8081.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Execution mode</th><th>Behaviour</th></tr></thead>
+        <tbody>
+          <tr><td><code>DEPLOYMENT</code></td><td>The control plane owns the function's instances through a deployment backend.</td></tr>
+          <tr><td><code>EXTERNAL</code></td><td>The function runs elsewhere; invocations are forwarded to its <code>endpointUrl</code>.</td></tr>
+          <tr><td><code>LOCAL</code></td><td>In-process execution, for testing.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="modules">
+  <div class="container">
+    <h2>Modules</h2>
+    <p class="section-lead">Pick a set at build time. Each module declares its defaults, requirements and conflicts, and an invalid selection fails before any task runs. The three deployment providers are mutually exclusive.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Module</th><th>Purpose</th><th class="center">Default</th></tr></thead>
+        <tbody>
+          <tr><td><code>async-queue</code></td><td>Per-function queues and scheduler for asynchronous calls</td><td class="center">✓</td></tr>
+          <tr><td><code>sync-queue</code></td><td>Admission control and backpressure for synchronous calls</td><td class="center">✓</td></tr>
+          <tr><td><code>autoscaler</code></td><td>Replica scaling driven by workload metrics</td><td class="center">✓</td></tr>
+          <tr><td><code>concurrency-control</code></td><td>Per-function concurrency governor</td><td class="center">✓</td></tr>
+          <tr><td><code>runtime-config</code></td><td>Hot reconfiguration through an admin API</td><td class="center">✓</td></tr>
+          <tr><td><code>offload</code></td><td>Transparent proxying of synchronous calls to a remote NanoFaaS</td><td class="center">✓</td></tr>
+          <tr><td><code>build-metadata</code></td><td>Build diagnostics endpoint</td><td class="center">✓</td></tr>
+          <tr><td><code>k8s-deployment-provider</code></td><td>Kubernetes backend</td><td class="center">✓</td></tr>
+          <tr><td><code>container-deployment-provider</code></td><td>Docker-compatible local backend</td><td class="center"></td></tr>
+          <tr><td><code>containerd-deployment-provider</code></td><td>Rootless containerd backend</td><td class="center"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="two-col">
+      <div>
+        <h3>Choose modules</h3>
+{% highlight bash %}
+./gradlew :control-plane:bootJar -PcontrolPlaneModules=none
+./gradlew :control-plane:bootJar -PcontrolPlaneModules=async-queue,autoscaler
+./gradlew :control-plane:bootJar -PcontrolPlaneModules=all
+{% endhighlight %}
+      </div>
+      <div>
+        <h3>Or build from a recipe</h3>
+        <p>A recipe fixes modules, configuration, JVM or native build mode, and the functions to package with their images. See <a href="{{ site.repo }}/blob/main/docs/recipes.md">distribution recipes</a>.</p>
+{% highlight bash %}
+./gradlew assembleRecipe -Precipe=recipes/local-demo.yaml
+{% endhighlight %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" id="sdks">
+  <div class="container">
+    <h2>Write functions in any language</h2>
+    <p class="section-lead">A function is an HTTP service behind a small contract. SDKs make it a few lines; examples ship for every SDK language plus Bash.</p>
+    <ul class="chips">
+      <li>Java</li>
+      <li>Python</li>
+      <li>Go</li>
+      <li>JavaScript</li>
+      <li>Rust</li>
+    </ul>
+    <div class="actions" style="justify-content:flex-start">
+      <a class="btn btn-primary" href="{{ site.repo }}/blob/main/docs/tutorial-function.md">Write a function</a>
+      <a class="btn btn-ghost" href="{{ site.repo }}/tree/main/sdks">Browse the SDKs</a>
+    </div>
+  </div>
+</section>
