@@ -83,6 +83,9 @@ print("no fallback:", bad) if bad else None
 sys.exit(1 if bad else 0)
 PY
 
+grep -q 'href="https://unimib-datai.github.io/datai-website/"' "$page" || fail "DatAI link missing"
+grep -q 'href="https://www.disco.unimib.it/en"' "$page" || fail "DISCo link missing"
+
 # WCAG AA (4.5:1) for light-theme link text and white-on-primary button text
 python3 - _site/assets/css/style.css <<'PY' || fail "light-theme contrast below 4.5:1"
 import re, sys
