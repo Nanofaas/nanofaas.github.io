@@ -134,6 +134,12 @@ PY
   done
   grep -qF "data-url=\"$url\"" "$out" || fail "$slug: copy-link button missing"
   grep -q 'navigator.clipboard ?' "$out" || fail "$slug: copy link must handle a missing Clipboard API"
+  img=$(sed -n 's/^image: *//p' "$src" | head -1)
+  if [ -n "$img" ]; then
+    test -f "_site$img" || fail "$slug: image $img missing"
+    python3 -c "from PIL import Image; import sys; assert Image.open(sys.argv[1]).size == (1200, 630)" "_site$img" \
+      || fail "$slug: preview image must be 1200x630"
+  fi
 done
 
 for f in $(find _site -name '*.html'); do

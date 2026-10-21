@@ -1,0 +1,17 @@
+\documentclass[tikz,border=0pt]{standalone}
+\usepackage{fontspec}
+\setmainfont{Inter}[BoldFont={Inter SemiBold}]
+\def\theme{light}\input{palette.tex}
+\hyphenpenalty=10000 \exhyphenpenalty=10000
+\begin{document}
+\begin{tikzpicture}
+  \fill[panel] (0,0) rectangle (16,8.4);
+  \fill[accent] (0,0) rectangle (0.18,8.4);
+  \node[anchor=west] at (1.0,4.2) {\includegraphics[width=5.2cm]{../../../assets/img/logo.png}};
+  \node[anchor=north west, text=accent, font=\bfseries\fontsize{15}{18}\selectfont] at (7.2,6.6) {Release 0.23.0};
+  \node[anchor=north west, text=fg, text width=8.4cm, align=left, font=\bfseries\fontsize{28}{32}\selectfont] at (7.2,5.75)
+    {The first release candidate};
+  \node[anchor=north west, text=muted, text width=8.2cm, font=\fontsize{12.5}{17}\selectfont] at (7.2,3.0)
+    {Rootless containerd · switchable schedulers · recipes v2 · Rust SDK · P2P discovery in beta};
+\end{tikzpicture}
+\end{document}
