@@ -25,6 +25,20 @@ main_class: home
   </div>
 </section>
 
+{% if site.posts.size > 0 %}
+<section class="section" id="updates">
+  <div class="container">
+    <div class="section-head">
+      <h2>Latest updates</h2>
+      <a href="{{ '/blog/' | relative_url }}">All posts →</a>
+    </div>
+    <ul class="post-cards">
+      {% for post in site.posts limit: 3 %}{% include post-card.html post=post %}{% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+
 <section class="section section-alt" id="highlights">
   <div class="container">
     <h2>Only what you need, nothing more</h2>

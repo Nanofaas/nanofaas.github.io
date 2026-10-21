@@ -230,3 +230,20 @@ pre {
 }
 .share a:hover, .share button:hover { border-color: var(--accent); }
 .back { margin: 24px 0 0; }
+
+/* ---------- blog: cards and index ---------- */
+#updates { padding-top: 24px; }
+.section-head { display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: baseline; justify-content: space-between; margin-bottom: 24px; }
+.section-head h2 { margin: 0; }
+.section-head a { font-weight: 600; text-decoration: none; }
+.post-cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); margin: 0; padding: 0; list-style: none; }
+.post-card { position: relative; display: flex; flex-direction: column; gap: 8px; }
+.post-card:hover { border-color: var(--accent); }
+.post-card time { color: var(--muted); font-size: 0.85rem; }
+.card.post-card h3 { margin: 0; }
+.card.post-card h3::before { content: none; }
+.post-card h3 a { color: var(--text); text-decoration: none; }
+.post-card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius); }
+.post-card .more { margin-top: auto; color: var(--accent); font-size: 0.95rem; font-weight: 600; }
+.page { padding-top: 48px; padding-bottom: 64px; }
+.page h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 4vw, 2.4rem); }

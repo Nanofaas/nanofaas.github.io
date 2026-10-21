@@ -6,7 +6,8 @@ cd "$(dirname "$0")/.."
 # A throwaway Markdown page proves a tutorial gets the shared layout; it is removed on exit.
 fixture=tutorials/zz-check-fixture.md
 [ -d tutorials ] || { mkdir tutorials; created_dir=1; }
-trap 'rm -f "$fixture"; [ -n "${created_dir:-}" ] && rmdir tutorials 2>/dev/null; true' EXIT
+mkdir -p .check-no-posts
+trap 'rm -f "$fixture"; [ -n "${created_dir:-}" ] && rmdir tutorials 2>/dev/null; rm -rf .check-no-posts .check-site-no-posts; true' EXIT
 cat > "$fixture" <<'MD'
 ---
 layout: default
@@ -24,7 +25,9 @@ echo hello
 MD
 
 docker run --rm -v "$PWD":/site -v nanofaas-site-bundle:/usr/local/bundle -w /site ruby:3.3 \
-  sh -c 'bundle install --quiet && bundle exec jekyll build --quiet'
+  sh -c 'bundle install --quiet && bundle exec jekyll build --quiet &&
+         printf "collections_dir: .check-no-posts\ndestination: .check-site-no-posts\n" > /tmp/no-posts.yml &&
+         bundle exec jekyll build --quiet --config _config.yml,/tmp/no-posts.yml'
 
 fail() { echo "FAIL: $*"; exit 1; }
 page=_site/index.html
@@ -137,5 +140,22 @@ for f in $(find _site -name '*.html'); do
   grep -q '<a href="/blog/">Blog</a>' "$f" || fail "$f: Blog nav link missing"
 done
 if grep -q 'name="robots"' "$page"; then fail "landing must stay indexable"; fi
+grep -q 'id="updates"' "$page" || fail "landing #updates missing"
+want=$(( posts < 3 ? posts : 3 ))
+n=$(grep -c 'class="card post-card"' "$page" || true)
+test "$n" -eq "$want" || fail "expected $want post cards on the landing, found $n"
+n=$(grep -c 'class="card post-card"' _site/blog/index.html || true)
+test "$n" -eq "$posts" || fail "expected $posts post cards on /blog/, found $n"
+python3 - "$page" _site/blog/index.html <<'PY' || fail "a post card links to a page that was not built"
+import os, re, sys
+for f in sys.argv[1:]:
+    links = re.findall(r'<h3 class="post-card-title"><a href="([^"]+)"', open(f).read())
+    if not links or not all(os.path.isfile("_site" + l + "index.html") for l in links):
+        sys.exit(1)
+PY
+empty=.check-site-no-posts
+test -f "$empty/index.html" || fail "no-posts build missing"
+if grep -q 'id="updates"' "$empty/index.html"; then fail "landing shows #updates with no posts"; fi
+grep -q 'No posts yet.' "$empty/blog/index.html" || fail "/blog/ has no empty state"
 
 echo "check ok"
