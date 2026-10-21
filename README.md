@@ -41,7 +41,7 @@ image: /assets/blog/slug/preview.png   # optional, 1200×630; defaults to the si
 The post, in Markdown.
 ```
 
-Images go in `assets/blog/slug/`. Put unfinished posts in `_drafts/` (no date in the file name) and preview them with `bundle exec jekyll serve --drafts`. A post dated in the future is skipped until the site is rebuilt after that date. Pushing to `main` publishes, so run `scripts/check.sh` first.
+Images go in `assets/blog/slug/`. Put unfinished posts in `_drafts/` (no date in the file name) and preview them with `bundle exec jekyll serve --drafts`. A post dated after the current UTC day is skipped until the site is rebuilt after that date (`scripts/check.sh` notes it). Pushing to `main` publishes, so run `scripts/check.sh` first.
 
 From a browser, <https://nanofaas.github.io/blog/new/> (not linked from the site) builds the file name and front matter and opens GitHub's editor.
 

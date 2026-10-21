@@ -110,8 +110,9 @@ sys.exit(1 if bad else 0)
 PY
 
 # ---------- blog ----------
-posts=$(ls _posts/*.md 2>/dev/null | wc -l | tr -d ' ')
-test "$posts" -ge 1 || fail "no posts in _posts/"
+test -n "$(ls _posts/*.md 2>/dev/null)" || fail "no posts in _posts/"
+today=$(date -u +%Y%m%d)
+posts=0  # published posts: GitHub Pages skips those dated after the build day (UTC)
 for src in _posts/*.md; do
   python3 - "$src" <<'PY' || fail "$src: front matter needs a title and a description"
 import re, sys
@@ -119,6 +120,11 @@ m = re.match(r"---\n(.*?)\n---\n", open(sys.argv[1]).read(), re.S)
 fm = m.group(1) if m else ""
 sys.exit(0 if all(re.search(rf"^{k}:\s*\S", fm, re.M) for k in ("title", "description")) else 1)
 PY
+  if [ "$(basename "$src" | cut -c1-10 | tr -d -)" -gt "$today" ]; then
+    echo "note: $src is dated in the future; it is published by the first build after that date"
+    continue
+  fi
+  posts=$((posts + 1))
   slug=$(basename "$src" .md | cut -c12-)
   out="_site/blog/$slug/index.html"
   test -f "$out" || fail "post $slug not built at /blog/$slug/"
