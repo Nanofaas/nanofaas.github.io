@@ -157,5 +157,11 @@ empty=.check-site-no-posts
 test -f "$empty/index.html" || fail "no-posts build missing"
 if grep -q 'id="updates"' "$empty/index.html"; then fail "landing shows #updates with no posts"; fi
 grep -q 'No posts yet.' "$empty/blog/index.html" || fail "/blog/ has no empty state"
+new=_site/blog/new/index.html
+test -f "$new" || fail "/blog/new/ not built"
+grep -q '<meta name="robots" content="noindex">' "$new" || fail "/blog/new/ must be noindex"
+grep -qF "var REPO = 'https://github.com/Nanofaas/nanofaas.github.io';" "$new" || fail "/blog/new/ does not target the site repo"
+grep -qF "'/new/main/_posts?filename='" "$new" || fail "/blog/new/ does not open GitHub's new-file editor"
+if grep -q 'href="/blog/new/"' "$page" _site/blog/index.html; then fail "/blog/new/ must not be linked"; fi
 
 echo "check ok"

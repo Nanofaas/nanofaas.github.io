@@ -1,0 +1,86 @@
+---
+layout: default
+title: New post
+description: Start a NanoFaaS blog post in GitHub's editor.
+permalink: /blog/new/
+noindex: true
+---
+<h1>New post</h1>
+<p>Fill in the fields, then open GitHub's editor with the post file ready in <code>_posts/</code>. Write the body in Markdown there and commit. A commit to <code>main</code> publishes the post within a few minutes; pick “Create a new branch” in the commit dialog to open a pull request instead. Without write access to the repository, GitHub offers to fork it and open a pull request.</p>
+
+<form class="new-post" id="new-post" novalidate>
+  <label>Title
+    <input name="title" required maxlength="120" autocomplete="off">
+  </label>
+  <label>Description <span class="hint">One or two sentences, shown on the post cards and in link previews.</span>
+    <textarea name="description" required rows="3" maxlength="300"></textarea>
+  </label>
+  <div class="row">
+    <label>Date
+      <input name="date" type="date" required>
+    </label>
+    <label>Slug <span class="hint">Part of the URL: lowercase letters, digits and hyphens.</span>
+      <input name="slug" required autocomplete="off" spellcheck="false">
+    </label>
+  </div>
+</form>
+
+<h2>File</h2>
+<p><code id="np-path">_posts/</code> is published at <code id="np-url">/blog/</code></p>
+<div class="highlight"><pre><code id="np-preview"></code></pre></div>
+<p class="np-status" id="np-status" aria-live="polite"></p>
+<p><a class="btn btn-primary" id="np-open" target="_blank" rel="noopener">Open in GitHub</a></p>
+
+<h2>Images</h2>
+<p>A post's images go in <code>assets/blog/&lt;slug&gt;/</code>. Open <a href="https://github.com/Nanofaas/nanofaas.github.io/upload/main/assets/blog">Upload files</a> on GitHub, drop a folder named after the slug, and reference each image from the post:</p>
+<div class="highlight"><pre><code id="np-image"></code></pre></div>
+<p>A post dated in the future is not published until the site is rebuilt after that date.</p>
+
+<script>
+  (function () {
+    var REPO = 'https://github.com/Nanofaas/nanofaas.github.io';
+    var f = document.getElementById('new-post').elements;
+    var out = function (id) { return document.getElementById(id); };
+    var slugEdited = false;
+    function pad(n) { return (n < 10 ? '0' : '') + n; }
+    var now = new Date();
+    f.date.value = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+    function slugify(s) {
+      return s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60).replace(/-+$/, '');
+    }
+    // YAML double-quoted scalar on one line
+    function yaml(s) {
+      return '"' + s.replace(/\s+/g, ' ').trim().replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+    }
+    function update() {
+      if (!slugEdited) f.slug.value = slugify(f.title.value);
+      var slug = f.slug.value, date = f.date.value, name = date + '-' + slug + '.md';
+      var body = '---\ntitle: ' + yaml(f.title.value) + '\ndescription: ' + yaml(f.description.value) +
+        '\n---\n\nWrite the post here, in Markdown.\n';
+      var missing = [];
+      if (!f.title.value.trim()) missing.push('a title');
+      if (!f.description.value.trim()) missing.push('a description');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) missing.push('a date');
+      if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) missing.push('a slug of lowercase letters, digits and hyphens');
+      out('np-path').textContent = '_posts/' + name;
+      out('np-url').textContent = '/blog/' + slug + '/';
+      out('np-preview').textContent = body;
+      out('np-image').textContent = '![Describe the image](/assets/blog/' + (slug || '<slug>') + '/figure.png)';
+      var open = out('np-open');
+      if (missing.length) {
+        open.removeAttribute('href');
+        open.setAttribute('aria-disabled', 'true');
+        out('np-status').textContent = 'Add ' + missing.join(', ') + '.';
+      } else {
+        open.href = REPO + '/new/main/_posts?filename=' + encodeURIComponent(name) + '&value=' + encodeURIComponent(body);
+        open.removeAttribute('aria-disabled');
+        out('np-status').textContent = '';
+      }
+    }
+    f.slug.addEventListener('input', function () { slugEdited = f.slug.value !== ''; });
+    document.getElementById('new-post').addEventListener('input', update);
+    document.getElementById('new-post').addEventListener('submit', function (e) { e.preventDefault(); });
+    update();
+  })();
+</script>

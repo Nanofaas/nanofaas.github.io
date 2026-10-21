@@ -247,3 +247,16 @@ pre {
 .post-card .more { margin-top: auto; color: var(--accent); font-size: 0.95rem; font-weight: 600; }
 .page { padding-top: 48px; padding-bottom: 64px; }
 .page h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 4vw, 2.4rem); }
+
+/* ---------- blog: new post form ---------- */
+.new-post { display: grid; gap: 16px; margin: 24px 0 8px; }
+.new-post label { display: grid; gap: 6px; font-weight: 600; }
+.new-post .hint { color: var(--muted); font-size: 0.9rem; font-weight: 400; }
+.new-post input, .new-post textarea {
+  width: 100%; padding: 10px 12px; color: var(--text); font: 400 1rem var(--font-body);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+}
+.new-post input:focus-visible, .new-post textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.new-post .row { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
+.np-status { min-height: 1.65em; margin: 8px 0; color: var(--muted); }
+.btn[aria-disabled="true"] { opacity: 0.5; pointer-events: none; }
