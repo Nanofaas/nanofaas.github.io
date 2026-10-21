@@ -116,6 +116,26 @@ m = re.match(r"---\n(.*?)\n---\n", open(sys.argv[1]).read(), re.S)
 fm = m.group(1) if m else ""
 sys.exit(0 if all(re.search(rf"^{k}:\s*\S", fm, re.M) for k in ("title", "description")) else 1)
 PY
+  slug=$(basename "$src" .md | cut -c12-)
+  out="_site/blog/$slug/index.html"
+  test -f "$out" || fail "post $slug not built at /blog/$slug/"
+  url="https://nanofaas.github.io/blog/$slug/"
+  enc=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$url")
+  grep -q '<meta property="og:type" content="article"' "$out" || fail "$slug: og:type is not article"
+  grep -q 'property="article:published_time"' "$out" || fail "$slug: no article:published_time"
+  grep -q '<meta property="og:description" content="[^"]' "$out" || fail "$slug: empty og:description"
+  grep -q 'class="skip-link" href="#main"' "$out" || fail "$slug: skip link missing"
+  for share in "linkedin.com/sharing/share-offsite/?url=$enc\"" "x.com/intent/post?url=$enc&amp;text=" \
+               "bsky.app/intent/compose?text=" "%20$enc\"" "mailto:?subject=" "body=$enc\""; do
+    grep -qF "$share" "$out" || fail "$slug: share link part $share missing"
+  done
+  grep -qF "data-url=\"$url\"" "$out" || fail "$slug: copy-link button missing"
+  grep -q 'navigator.clipboard ?' "$out" || fail "$slug: copy link must handle a missing Clipboard API"
 done
+
+for f in $(find _site -name '*.html'); do
+  grep -q '<a href="/blog/">Blog</a>' "$f" || fail "$f: Blog nav link missing"
+done
+if grep -q 'name="robots"' "$page"; then fail "landing must stay indexable"; fi
 
 echo "check ok"

@@ -33,3 +33,9 @@ defaults:
       path: ""
     values:
       image: /assets/img/og.png
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      permalink: /blog/:title/

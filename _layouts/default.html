@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% seo %}
+  {% if page.noindex %}<meta name="robots" content="noindex">{% endif %}
   <link rel="icon" type="image/png" href="{{ '/assets/img/mark.png' | relative_url }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,6 +27,7 @@
         <li class="optional"><a href="{{ '/' | relative_url }}#quick-start">Quick start</a></li>
         <li class="optional"><a href="{{ '/' | relative_url }}#architecture">Architecture</a></li>
         <li class="optional"><a href="{{ '/' | relative_url }}#recipes">Recipes</a></li>
+        <li><a href="{{ '/blog/' | relative_url }}">Blog</a></li>
         <li><a href="{{ site.docs }}">Docs</a></li>
         <li><a href="{{ site.repo }}">GitHub</a></li>
       </ul>

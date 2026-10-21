@@ -1,0 +1,14 @@
+---
+layout: default
+---
+<article class="post">
+  <header>
+    <p class="post-meta"><a href="{{ '/blog/' | relative_url }}">Blog</a> · <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time></p>
+    <h1>{{ page.title | escape }}</h1>
+  </header>
+  {{ content }}
+  <footer class="post-footer">
+    {% include share.html %}
+    <p class="back"><a href="{{ '/blog/' | relative_url }}">← All posts</a></p>
+  </footer>
+</article>

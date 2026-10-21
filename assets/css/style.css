@@ -76,6 +76,11 @@ code, pre { font-family: var(--font-mono); font-size: 0.9em; }
 .nav-links a { color: var(--muted); font-size: 0.95rem; font-weight: 500; text-decoration: none; }
 .nav-links a:hover { color: var(--text); }
 @media (max-width: 760px) { .nav-links .optional { display: none; } }
+@media (max-width: 400px) {
+  .nav { gap: 12px; }
+  .nav-links { gap: 12px; }
+  .nav-links a { font-size: 0.9rem; }
+}
 
 .site-footer { border-top: 1px solid var(--line); padding: 32px 0; color: var(--muted); font-size: 0.9rem; }
 .site-footer .container { display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; align-items: center; }
@@ -206,3 +211,22 @@ pre {
 /* SDK chips */
 .chips { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 24px; padding: 0; list-style: none; }
 .chips li { padding: 10px 20px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; font: 600 1rem var(--font-head); }
+
+/* ---------- blog: post ---------- */
+.post-meta { margin: 0 0 8px; color: var(--muted); font-size: 0.9rem; }
+.post-meta a { color: inherit; }
+.post h1 { margin-top: 0; }
+.post-figure { margin: 2rem 0; padding: 16px; overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.post-figure img { display: block; width: 100%; min-width: 600px; border-radius: 0; }
+.post-figure figcaption { margin-top: 10px; color: var(--muted); font-size: 0.9rem; }
+.post-footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); }
+.share { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.share-label { font: 600 1rem var(--font-head); }
+.share ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.share a, .share button {
+  display: inline-block; padding: 6px 14px; cursor: pointer;
+  background: none; border: 1px solid var(--line); border-radius: 999px;
+  color: var(--text); font: 500 0.9rem var(--font-body); text-decoration: none;
+}
+.share a:hover, .share button:hover { border-color: var(--accent); }
+.back { margin: 24px 0 0; }
