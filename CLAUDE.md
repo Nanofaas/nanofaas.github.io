@@ -6,7 +6,7 @@ Jekyll site for NanoFaaS, published by GitHub Pages from `main` of `Nanofaas/nan
 
 ## Commands
 
-- `scripts/check.sh` — builds in Docker (`ruby:3.3`; system Ruby 2.6 is too old) and asserts on `_site/`: assets present, `docs/ scripts/ brand/` not published, section ids and module count, no "research" wording, Open Graph image, skip link, Clipboard-API guard, WCAG AA contrast of the light accent, `color-mix()` fallbacks. It also builds a throwaway `tutorials/zz-check-fixture.md` (deleted on exit) to prove a Markdown page gets the prose layout. Run after every change.
+- `scripts/check.sh` — builds in Docker (`ruby:3.3`; system Ruby 2.6 is too old) and asserts on `_site/`: assets present, `docs/ scripts/ brand/` not published, section ids and module count, no "research" wording, Open Graph image, skip link, Clipboard-API guard, WCAG AA contrast of the light accent, `color-mix()` fallbacks. It also builds a throwaway `tutorials/zz-check-fixture.md` (deleted on exit) to prove a Markdown page gets the prose layout. For the blog it checks every post's front matter (title, description), Open Graph article tags and share links, the landing/index post cards, `/blog/new/` noindex, and a second build with no posts (`.check-site-no-posts/`, deleted on exit). Run after every change.
 - `python3 -m http.server 4000 -d _site` — view the built site.
 - `python3 scripts/make-assets.py` — regenerate `assets/img/*` (logo, dark variant, 64px mark, 1200×630 `og.png` link preview) from `brand/nanofaas-logo-transparent.png`.
 
@@ -14,11 +14,12 @@ Headless Chrome screenshots with `--window-size` are misleading: the viewport is
 
 ## Structure
 
-- `_layouts/default.html` is the only layout: head (`{% seo %}`, Google Fonts), nav, footer, and the inline copy-button script (targets `.highlight > pre`, copies from `code`).
+- `_layouts/default.html` is the base layout (`_layouts/post.html` wraps it for posts): head (`{% seo %}`, Google Fonts), nav, footer, and the inline copy-button script (targets `.highlight > pre`, copies from `code`).
 - `main` gets class `page.main_class`, defaulting to `container prose`; `index.html` sets `main_class: home` and builds its own `.section`s. Any new Markdown page with `layout: default` is styled as prose automatically.
 - `assets/css/style.css` holds everything: tokens on `:root` with a `prefers-color-scheme: dark` override, then base, header/footer, code/Rouge colors, prose, landing sections, SVG diagram classes (`d-*`).
 - Nav links use `/#id`, so they work from sub-pages. The landing ids `highlights quick-start architecture modules recipes sdks` are asserted by `check.sh`.
 - Code blocks on `index.html` use `{% highlight %}` so they get the same Rouge markup as Markdown fences.
+- Blog: posts in `_posts/` get `layout: post` and `/blog/:title/` from `_config.yml` defaults. `_includes/post-card.html` is shared by the landing `#updates` section (latest 3, hidden when there are no posts) and `blog/index.html`; `_includes/share.html` holds the share links and Copy link. `blog/new.html` (`/blog/new/`, `noindex`, not linked) opens GitHub's new-file editor pre-filled. A post's images live in `assets/blog/<slug>/`; figure sources, if any, in `docs/blog/<slug>/`.
 
 ## Content rules
 
