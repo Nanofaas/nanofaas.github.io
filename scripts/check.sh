@@ -38,7 +38,7 @@ for d in docs scripts brand; do
 done
 grep -q 'rel="icon"' "$page" || fail "favicon link missing"
 grep -q "querySelector('code')" "$page" || fail "copy button must copy from <code>, not the whole <pre>"
-if grep -qi research "$page"; then fail "'research' wording on page"; fi
+if grep -rli research _site --include='*.html'; then fail "'research' wording on a page"; fi
 for id in highlights quick-start architecture modules recipes sdks; do
   grep -q "id=\"$id\"" "$page" || fail "section #$id missing"
 done
@@ -105,5 +105,17 @@ bad = {k: round(ratio(*v), 2) for k, v in pairs.items() if ratio(*v) < 4.5}
 print("contrast fail:", bad) if bad else None
 sys.exit(1 if bad else 0)
 PY
+
+# ---------- blog ----------
+posts=$(ls _posts/*.md 2>/dev/null | wc -l | tr -d ' ')
+test "$posts" -ge 1 || fail "no posts in _posts/"
+for src in _posts/*.md; do
+  python3 - "$src" <<'PY' || fail "$src: front matter needs a title and a description"
+import re, sys
+m = re.match(r"---\n(.*?)\n---\n", open(sys.argv[1]).read(), re.S)
+fm = m.group(1) if m else ""
+sys.exit(0 if all(re.search(rf"^{k}:\s*\S", fm, re.M) for k in ("title", "description")) else 1)
+PY
+done
 
 echo "check ok"
